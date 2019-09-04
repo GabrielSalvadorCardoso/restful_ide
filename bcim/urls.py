@@ -99,6 +99,8 @@ urlpatterns = [
     path('unidade-conservacao-nao-snuc', UnidadeConservacaoNaoSnucList.as_view(),
          name='UnidadeConservacaoNaoSnuc_list'),
 
+    path('unidades-federativas/<int:pk>/<path:operation>/', UnidadesFederativasDetail.as_view(), name='UnidadesFederativas_detail_operation'),
+    path('unidades-federativas/<int:pk><str:extension>', UnidadesFederativasDetail.as_view(), name='UnidadesFederativas_detail_extension'),
     path('unidades-federativas/<int:pk>', UnidadesFederativasDetail.as_view(), name='UnidadesFederativas_detail'),
     path('unidades-federativas', UnidadesFederativasList.as_view(), name='UnidadesFederativas_list'),
 

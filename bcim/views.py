@@ -1,16 +1,22 @@
+import json
+
 from rest_framework.negotiation import BaseContentNegotiation
 from rest_framework.reverse import reverse
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.http import HttpResponse
+import mapnik
+import os
 
 from bcim.contexts import AbstractContextResource, FeatureCollectionContextResource, FeatureContextResource
+from hyper_resource import operations
 from .models import *
 from .serializers import *
 
 JSON_CONTENT_TYPE = "application/json"
 GEOJSON_CONTENT_TYPE = "application/geo+json"
-JSONLD_CONTENT_TYPE = "application/ld+json"
+CONTENT_TYPE_JSONLD = "application/ld+json"
 
 CORS_HEADERS = {
     "Access-Control-Allow-Origin": "*",
@@ -41,6 +47,9 @@ class AbstractResource(APIView):
     serializer_class = None
     context_class = AbstractContextResource
 
+    def get_operation_name_from_path(self, operation_snippet):
+        return operation_snippet.split("/")[0]
+
     def add_cors_headers(self, response):
         for header, value in CORS_HEADERS.items():
             response[header] = value
@@ -57,7 +66,7 @@ class AbstractResource(APIView):
 
     def options(self, request, *args, **kwargs):
         context = self.context_class().create_context_for_fields(self.serializer_class.Meta.model()._meta.fields)
-        return Response(context, status=status.HTTP_200_OK, content_type=JSONLD_CONTENT_TYPE)
+        return Response(context, status=status.HTTP_200_OK, content_type=CONTENT_TYPE_JSONLD)
 
 class AbstractCollectionResource(AbstractResource):
 
@@ -74,34 +83,140 @@ class AbstractCollectionResource(AbstractResource):
             content_type=required_object.content_type
         )
 
-class FeatureConcentrator(AbstractResource):
+CONTENT_TYPE_IMAGE_PNG = "image/png"
+CONTENT_TYPE_GEOJSON = "application/geo+json"
+
+class FeatureUtils(AbstractResource):
     """
     This isn't a Hyper Resource class. The role pf this class is to
     concentrate behavior common to FeatureResource and FeatureCollectionResource
     """
-    pass
+    def default_content_types(self):
+        return [CONTENT_TYPE_IMAGE_PNG, CONTENT_TYPE_GEOJSON, CONTENT_TYPE_JSONLD]
 
 class FeatureCollectionResource(AbstractCollectionResource):
     context_class = FeatureCollectionContextResource
 
+    def __init__(self):
+        super().__init__()
+        self.feature_utils = FeatureUtils()
+
     def get(self, request, *args, **kwargs):
         required_object = self.basic_get(request, *args, **kwargs)
         return Response(
             required_object.representation_object,
             status=required_object.status_code,
-            content_type=GEOJSON_CONTENT_TYPE
+            content_type=CONTENT_TYPE_GEOJSON
         )
+from hyper_resource.operations import SPATIAL_OPERATIONS, InvalidOperationException
+
 
 class FeatureResource(AbstractResource):
     context_class = FeatureContextResource
+    available_operations = SPATIAL_OPERATIONS
 
+    def __init__(self):
+        super().__init__()
+        self.feature_utils = FeatureUtils()
+
+    # ------------------- content type decider methods -------------------
+    def content_type_by_accept(self, request, *args, **kwargs):
+        if request.META['HTTP_ACCEPT'] in self.feature_utils.default_content_types():
+            return request.META['HTTP_ACCEPT']
+        if 'extension' in args[0] and args[0]['extension'] == '.png':
+            return CONTENT_TYPE_IMAGE_PNG
+
+        return CONTENT_TYPE_GEOJSON
+
+    # ------------------- response methods -------------------
     def get(self, request, *args, **kwargs):
         required_object = self.basic_get(request, *args, **kwargs)
+
+        if required_object.content_type == CONTENT_TYPE_IMAGE_PNG:
+            return HttpResponse(
+                required_object.representation_object,
+                status=required_object.status_code,
+                content_type=CONTENT_TYPE_IMAGE_PNG
+            )
+
         return Response(
             required_object.representation_object,
             status=required_object.status_code,
-            content_type=GEOJSON_CONTENT_TYPE
+            content_type=CONTENT_TYPE_GEOJSON
         )
+
+    # todo: move to hyper_resource.operations
+    def execute_operation(self, object, operation_snippet):
+        operation_name = self.get_operation_name_from_path(operation_snippet)
+        if operations.is_operation_for_type(operation_name, type(object)):
+            operation = operations.get_operation_for_type(operation_name, type(object))
+            parameters_converted = operation.convert_parameters(operation_snippet)
+            if parameters_converted == None:
+                operation_result = getattr(object, operation_name)()
+            else:
+                operation_result = getattr(object, operation_name)(*parameters_converted)
+        else:
+            raise InvalidOperationException(operation_snippet + " isn't a valid operation")
+
+        rem_oper_snippert = operation.get_remaining_operations_snippet(operation_snippet)
+        if rem_oper_snippert:
+            return self.execute_operation(operation_result, rem_oper_snippert)
+        return operation_result
+
+    def required_object_for_operation(self, request, object, *args, **kwargs):
+        try:
+            # todo: need to decide content-type (by operation return type and accept) and serialization
+            operation_result = self.execute_operation(object, kwargs["operation"])
+            return RequiredObject(json.loads(operation_result.geojson), GEOJSON_CONTENT_TYPE, 200)
+        except InvalidOperationException as ex:
+            return RequiredObject(
+                json.dumps( {"Invalid Operation": ex.args[0]} ),
+                JSON_CONTENT_TYPE, 400
+            )
+
+    def basic_get(self, request, *args, **kwargs):
+        object = self.serializer_class.Meta.model.objects.get(pk=kwargs['pk'])
+
+        try:
+            return self.required_object_for_operation(request, object, *args, **kwargs)
+        except KeyError:
+            contype_accept = self.content_type_by_accept(request, *args, kwargs)
+            serialize_data = self.serialize_object(request, object, contype_accept)
+            return RequiredObject(serialize_data, contype_accept, 200)
+
+    # ------------------- serializer methods -------------------
+
+    def serialize_object(self, request, object, content_type):
+        if content_type == CONTENT_TYPE_IMAGE_PNG:
+            return self.generate_image(object)
+        return self.serializer_class(object, context={'request': request}).data
+
+    def generate_image(self, object):
+        map = mapnik.Map(800, 600)
+        mapnik.load_map(map, 'style.xml')
+        layer = mapnik.Layer('Provinces')
+        spatial_references = {
+            4326: "+init=epsg:4326",
+            4674: "+proj=longlat +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +no_defs ",
+            4618: "+proj=longlat +ellps=aust_SA +towgs84=-67.35,3.88,-38.22,0,0,0,0 +no_defs",
+            9999: "+proj=lcc +ellps=GRS80 +lat_0=49 +lon_0=-95 +lat+1=49 +lat_2=77 +datum=NAD83 +units=m +no_defs"
+        }
+        layer.srs = spatial_references[object.geom.srs.srid]# object.wkt.srs
+        layer.datasource = mapnik.CSV(inline='wkt\n"' + object.geom.wkt + '"', filesize_max=500)
+
+        geom_type = object.geom.geom_type if object.geom.geom_type.lower in ['polygon', 'line', 'point'] else 'polygon'
+        layer.styles.append(geom_type)
+
+        map.layers.append(layer)
+        map.zoom_all()
+        image = mapnik.Image(800, 600)
+        mapnik.render(map, image)
+        image.save('geometry.png')
+
+        with open('geometry.png', 'rb') as geometry_png:
+            data = geometry_png.read()
+        os.remove('geometry.png')
+        return data
 
 #  ============================ BCIM Resource Classes  ============================
 

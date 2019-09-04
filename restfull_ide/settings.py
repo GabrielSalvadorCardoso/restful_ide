@@ -34,6 +34,7 @@ ALLOWED_HOSTS = [
 # Application definition
 
 INSTALLED_APPS = [
+    'hyper_resource',
     'bcim',
     'django.contrib.gis',
     'rest_framework',
