@@ -34,6 +34,7 @@ ALLOWED_HOSTS = [
 # Application definition
 
 INSTALLED_APPS = [
+    'restfull_ide',
     'hyper_resource',
     'bcim',
     'django.contrib.gis',
@@ -48,6 +49,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'django.middleware.gzip.GZipMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -89,7 +91,8 @@ DATABASES = {
 
         },
 
-        'HOST': '192.168.0.11',
+        #'HOST': '192.168.0.11',
+        'HOST': 'localhost',
         'PORT': '54324',
         'NAME': 'gis',
         'USER': 'docker',

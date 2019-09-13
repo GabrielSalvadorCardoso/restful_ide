@@ -66,3 +66,9 @@ class FeatureContextResource(AbstractContextResource):
     def create_context_for_fields(self, fields):
         fields_no_geom = [field for field in fields if not self.is_geometry_field(field)]
         return super().create_context_for_fields(fields_no_geom)
+
+    def create_context_for_operations(self, operations_dict):
+        supperted_operation_dict = {"hydra:supportedOperation": []}
+        for name, operation in operations_dict.items():
+            supperted_operation_dict["hydra:supportedOperation"].append(operation.get_hydra_description())
+        return supperted_operation_dict

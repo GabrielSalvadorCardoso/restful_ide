@@ -1,0 +1,10 @@
+2019/09/12:
+    DONE
+    - Responding with image for FeatureResource and FeatureCollectionResource (including operations)
+    - Operations could be applied to FeatureResource (chained)
+    - Operations could be applied to FeatureCollectionResource (not chained)
+    - OPTIONS for FeatureResource returning hydra:supportedOperations
+
+    TODOS
+    - Implement hydra:supportedOperations in OPTIONS to FeatureCollectionResource
+    - Implement cache

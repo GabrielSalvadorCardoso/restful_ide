@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib.gis import admin
 from django.urls import path, include
 
+app_name = "restfull_ide"
 urlpatterns = [
-    path('api/restfull-ide/bcim/', include('bcim.urls')),
+    path('api/restfull-ide/bcim/', include('bcim.urls'), name="entrypoint"),
 ]

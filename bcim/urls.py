@@ -100,8 +100,9 @@ urlpatterns = [
          name='UnidadeConservacaoNaoSnuc_list'),
 
     path('unidades-federativas/<int:pk>/<path:operation>/', UnidadesFederativasDetail.as_view(), name='UnidadesFederativas_detail_operation'),
-    path('unidades-federativas/<int:pk><str:extension>', UnidadesFederativasDetail.as_view(), name='UnidadesFederativas_detail_extension'),
+    path('unidades-federativas/<int:pk>.<str:extension>', UnidadesFederativasDetail.as_view(), name='UnidadesFederativas_detail_extension'),
     path('unidades-federativas/<int:pk>', UnidadesFederativasDetail.as_view(), name='UnidadesFederativas_detail'),
+    path('unidades-federativas/<path:operation>/', UnidadesFederativasList.as_view(), name='UnidadesFederativas_list_operation'),
     path('unidades-federativas', UnidadesFederativasList.as_view(), name='UnidadesFederativas_list'),
 
     path('unidade-protecao-integral/<int:pk>', UnidadeProtecaoIntegralDetail.as_view(),
@@ -116,7 +117,10 @@ urlpatterns = [
          name='AglomeradoRuralIsolado_detail'),
     path('aglomerado-rural-isolado', AglomeradoRuralIsoladoList.as_view(), name='AglomeradoRuralIsolado_list'),
 
+    path('aldeia-indegena/<int:pk>/<path:operation>/', AldeiaIndigenaDetail.as_view(), name='AldeiaIndigena_detail_operation'),
+    path('aldeia-indigena/<int:pk>,<str:extension>', AldeiaIndigenaDetail.as_view(), name='AldeiaIndigena_detail_extension'),
     path('aldeia-indigena/<int:pk>', AldeiaIndigenaDetail.as_view(), name='AldeiaIndigena_detail'),
+    path('aldeia-indigena/<path:operation>', AldeiaIndigenaList.as_view(), name='AldeiaIndigena_list_operation'),
     path('aldeia-indigena', AldeiaIndigenaList.as_view(), name='AldeiaIndigena_list'),
 
     path('area-edificada/<int:pk>', AreaEdificadaDetail.as_view(), name='AreaEdificada_detail'),
@@ -126,6 +130,7 @@ urlpatterns = [
     path('capital', CapitalList.as_view(), name='Capital_list'),
 
     path('cidade/<int:pk>', CidadeDetail.as_view(), name='Cidade_detail'),
+    path('cidade/<path:operation>', CidadeList.as_view(), name='Cidade_list_operation'),
     path('cidade', CidadeList.as_view(), name='Cidade_list'),
 
     path('vila/<int:pk>', VilaDetail.as_view(), name='Vila_detail'),

@@ -5,7 +5,17 @@
             <MarkersSymbolizer file="marker-icon.png" allow-overlap="yes" />
         </Rule>
     </Style>
+    <Style name="multipoint">
+        <Rule>
+            <MarkersSymbolizer file="marker-icon.png" allow-overlap="yes" />
+        </Rule>
+    </Style>
     <Style name="line">
+        <Rule>
+            <LineSymbolizer />
+        </Rule>
+    </Style>
+    <Style name="multilinestring">
         <Rule>
             <LineSymbolizer />
         </Rule>
@@ -13,6 +23,11 @@
     <Style name="polygon">
         <Rule>
             <PolygonSymbolizer fill="white" />
+        </Rule>
+    </Style>
+    <Style name="multipolygon">
+        <Rule>
+            <PolygonSymbolizer fill="#cccccc" />
         </Rule>
     </Style>
 </Map>
