@@ -18,6 +18,8 @@ https://purl.org/geojson/vocab#type
 """
 from django.contrib.gis.geos import Point, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon, GEOSGeometry
 
+from hyper_resource.models import FeatureCollectionModel
+
 VOCABULARY = {
     # todo: these IRIs references classes. The intent is to describe its instances (not his class), so these must be replaced. Like in BORBA (2017) uses http://ecoide.cos.urfj.br/instituicoes/ibge/contexts/geometry.jsonld
     # todo: search for "schema:rangeIncludes", "schema:domainIncludes", "schema:StructuredValue"
@@ -29,6 +31,7 @@ VOCABULARY = {
     MultiPoint: {"@id": "https://schema.org/value", "@type": "https://purl.org/geojson/vocab#MultiPoint"},
     MultiLineString: {"@id": "https://schema.org/value", "@type": "https://purl.org/geojson/vocab#MultiLineString"},
     MultiPolygon: {"@id": "https://schema.org/value", "@type": "https://purl.org/geojson/vocab#MultiPolygon"},
+    FeatureCollectionModel: {"@id": "https://schema.org/value", "@type": "https://purl.org/geojson/vocab#FeatureCollection"},
 
     # primitives
     int: {"@id": "https://schema.org/value", "@type": "https://schema.org/Integer"},

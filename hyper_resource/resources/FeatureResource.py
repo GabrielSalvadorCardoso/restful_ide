@@ -36,13 +36,12 @@ class FeatureResource(AbstractResource):
         try:
             return d[object_type]
         except KeyError:
-            raise NoAvailableRepresentationException("There's no available representations for this resource type: " + object_type)
+            return super().available_content_types_for_type(object_type)
 
     def default_content_type_for_type(self, object_type):
         if issubclass(object_type, FeatureModel) or issubclass(object_type, GEOSGeometry):
             return CONTENT_TYPE_GEOJSON
-        raise NoAvailableRepresentationException(
-            "There's no available representations for this resource type: " + object_type)
+        return super().default_content_type_for_type(object_type)
 
     def content_type_for_object_type(self, request, object_type):
         contype_accept = self.feature_utils.content_type_by_accept(request)
@@ -79,7 +78,10 @@ class FeatureResource(AbstractResource):
     def required_context_for_operation(self, request, *args, **kwargs):
         context = {}
         operation_return_type = self.get_operation_return_type(kwargs["operation"])
-        supported_operation_context = self.context_class().create_context_for_operations(operations.OPERATIONS_BY_TYPE[operation_return_type])
+        try:
+            supported_operation_context = self.context_class().create_context_for_operations(operations.OPERATIONS_BY_TYPE[operation_return_type])
+        except KeyError:
+            supported_operation_context = {"hydra:supportedOperation": []}
         context.update(supported_operation_context)
         return RequiredObject(context, CONTENT_TYPE_JSONLD, 200)
 
@@ -105,6 +107,15 @@ class FeatureResource(AbstractResource):
             return operations_for_object_type[operation_name]
         except KeyError:
             raise InvalidOperationException(operation_name + " isn't an operation for " + object_type)
+
+    """
+    --select * from bcim_2016.tra_trecho_rodoviario_l where jurisdicao like '%Estadual%';
+--select * from bcim_2016.tra_trecho_rodoviario_l where codtrechor like '%RJ-116%' and jurisdicao like '%Estadual%';
+--select * from bcim_2016.tra_trecho_ferroviario_l;
+select * from bcim_2016.tra_trecho_rodoviario_l where tipotrecho not like 'Rodovia';
+select * from bcim_2016.tra_trecho_rodoviario_l where gid = 40159
+34114
+    """
 
     # todo: move to hyper_resource.operations
     def execute_operation(self, object, operation_snippet):
@@ -158,7 +169,8 @@ class FeatureResource(AbstractResource):
             # todo: need to decide content-type (by operation return type and accept) and serialization
             operation_result = self.execute_operation(object, kwargs["operation"])
             contype_type = self.content_type_for_object_type(request, type(operation_result))
-            serialize_data = self.serialize_object(request, operation_result, contype_type)
+            operation_name = self.get_operation_name_from_path(kwargs["operation"])
+            serialize_data = self.serialize_object(request, operation_result, contype_type, operation_name=operation_name)
             return RequiredObject(serialize_data, contype_type, 200)
 
         except InvalidOperationException as ex:
@@ -182,7 +194,7 @@ class FeatureResource(AbstractResource):
 
     # ------------------- serializer methods -------------------
 
-    def serialize_object(self, request, object, content_type):
+    def serialize_object(self, request, object, content_type, operation_name=None):
         if content_type == CONTENT_TYPE_IMAGE_PNG:
             if isinstance(object, FeatureModel):
                 return self.feature_utils.generate_geometric_image(object.geom)
@@ -192,4 +204,4 @@ class FeatureResource(AbstractResource):
             return self.serializer_class(object, context={'request': request}).data
         if isinstance(object, GEOSGeometry):
             return json.loads(object.geojson)
-        return json.loads(object)
+        return {operation_name: object}

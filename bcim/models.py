@@ -658,12 +658,12 @@ class UnidadeFederacao(FeatureModel):
     geometriaa = models.CharField(max_length=3, blank=True, null=True)
     sigla = models.CharField(max_length=3, blank=True, null=True)
     geocodigo = models.CharField(max_length=15, blank=True, null=True)
-    id_produto = models.IntegerField(blank=True, null=True)
-    id_element = models.IntegerField(blank=True, null=True)
-    cd_insumo_field = models.IntegerField(db_column='cd_insumo_', blank=True, null=True)  # Field renamed because it ended with '_'.
-    nr_insumo_field = models.IntegerField(db_column='nr_insumo_', blank=True, null=True)  # Field renamed because it ended with '_'.
-    nr_insum_1 = models.IntegerField(blank=True, null=True)
-    tx_insumo_field = models.CharField(db_column='tx_insumo_', max_length=60, blank=True, null=True)  # Field renamed because it ended with '_'.
+    #id_produto = models.IntegerField(blank=True, null=True)
+    #id_element = models.IntegerField(blank=True, null=True)
+    #cd_insumo_field = models.IntegerField(db_column='cd_insumo_', blank=True, null=True)  # Field renamed because it ended with '_'.
+    #nr_insumo_field = models.IntegerField(db_column='nr_insumo_', blank=True, null=True)  # Field renamed because it ended with '_'.
+    #nr_insum_1 = models.IntegerField(blank=True, null=True)
+    #tx_insumo_field = models.CharField(db_column='tx_insumo_', max_length=60, blank=True, null=True)  # Field renamed because it ended with '_'.
     geom = models.GeometryField(blank=True, null=True)
 
     class Meta:

@@ -239,7 +239,7 @@ class UnidadeFederacaoSerializer(GeoFeatureModelSerializer):
         geo_field = 'geom'
         auto_bbox = True
         id_field = 'gid'
-        fields = ['gid', 'nome', 'nomeabrev', 'sigla', 'geocodigo', 'id_produto', 'id_element', 'nr_insum_1']
+        fields = ['gid', 'nome', 'nomeabrev', 'sigla', 'geocodigo']#, 'id_produto', 'id_element', 'nr_insum_1']
 
 class UnidadeProtecaoIntegralSerializer(GeoFeatureModelSerializer):
     class Meta:

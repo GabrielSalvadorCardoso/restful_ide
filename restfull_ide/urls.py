@@ -18,5 +18,5 @@ from django.urls import path, include
 
 app_name = "restfull_ide"
 urlpatterns = [
-    path('api/restfull-ide/bcim/', include('bcim.urls'), name="entrypoint"),
+    path('api/restfull-ide/bcim/', include('bcim.urls', namespace="entrypoint"))#, name="entrypoint"),
 ]

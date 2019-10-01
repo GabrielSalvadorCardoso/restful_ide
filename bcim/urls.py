@@ -1,4 +1,4 @@
-from django.urls import path, include
+from django.urls import path, include, re_path
 from .views import *
 
 app_name = "bcim"
@@ -99,10 +99,14 @@ urlpatterns = [
     path('unidade-conservacao-nao-snuc', UnidadeConservacaoNaoSnucList.as_view(),
          name='UnidadeConservacaoNaoSnuc_list'),
 
-    path('unidades-federativas/<int:pk>/<path:operation>/', UnidadesFederativasDetail.as_view(), name='UnidadesFederativas_detail_operation'),
+    re_path('^unidades-federativas/(?P<pk>[0-9]+)/(?P<operation>.+)/?$', UnidadesFederativasDetail.as_view(), name='UnidadesFederativas_detail_operation'),
+    re_path('^unidades-federativas/(?P<sigla>[A-Za-z]{2})/(?P<operation>.+)/?$', UnidadesFederativasDetail.as_view(), name='UnidadesFederativas_bysigla_operation'),
     path('unidades-federativas/<int:pk>.<str:extension>', UnidadesFederativasDetail.as_view(), name='UnidadesFederativas_detail_extension'),
+    re_path('^unidades-federativas/(?P<sigla>[A-Za-z]{2})(?P<extension>\..+)/?$', UnidadesFederativasDetail.as_view(), name='UnidadesFederativas_bysigla_extension'),
     path('unidades-federativas/<int:pk>', UnidadesFederativasDetail.as_view(), name='UnidadesFederativas_detail'),
+    re_path('^unidades-federativas/(?P<sigla>[A-Za-z]{2})/?$', UnidadesFederativasDetail.as_view(), name='UnidadesFederativas_bysigla_detail'),
     path('unidades-federativas/<path:operation>/', UnidadesFederativasList.as_view(), name='UnidadesFederativas_list_operation'),
+    path('unidades-federativas.<str:extension>', UnidadesFederativasList.as_view(), name='UnidadesFederativas_list_extension'),
     path('unidades-federativas', UnidadesFederativasList.as_view(), name='UnidadesFederativas_list'),
 
     path('unidade-protecao-integral/<int:pk>', UnidadeProtecaoIntegralDetail.as_view(),
@@ -126,7 +130,10 @@ urlpatterns = [
     path('area-edificada/<int:pk>', AreaEdificadaDetail.as_view(), name='AreaEdificada_detail'),
     path('area-edificada', AreaEdificadaList.as_view(), name='AreaEdificada_list'),
 
+	re_path('^capital/(?P<pk>[0-9]+)/(?P<operation>.+)/?$', CapitalDetail.as_view(), name='Capital_detail_operation'),
+    path('capital/<int:pk>.<str:extension>', CapitalDetail.as_view(), name='Capital_detail_operation'),
     path('capital/<int:pk>', CapitalDetail.as_view(), name='Capital_detail'),
+    path('capital/<path:operation>/', CapitalList.as_view(), name='Capital_list_operation'),
     path('capital', CapitalList.as_view(), name='Capital_list'),
 
     path('cidade/<int:pk>', CidadeDetail.as_view(), name='Cidade_detail'),
@@ -203,7 +210,10 @@ urlpatterns = [
     path('trecho-hidroviario/<int:pk>', TrechoHidroviarioDetail.as_view(), name='TrechoHidroviario_detail'),
     path('trecho-hidroviario', TrechoHidroviarioList.as_view(), name='TrechoHidroviario_list'),
 
+    re_path('^trecho-rodoviario/(?P<pk>[0-9]+)/(?P<operation>.+)/?$', TrechoRodoviarioDetail.as_view(), name='TrechoRodoviario_detail_operation'),
+    path('trecho-rodoviario/<int:pk>.<str:extension>', TrechoRodoviarioDetail.as_view(), name='TrechoRodoviario_detail_extension'),
     path('trecho-rodoviario/<int:pk>', TrechoRodoviarioDetail.as_view(), name='TrechoRodoviario_detail'),
+    path('trecho-rodoviario/<path:operation>/', TrechoRodoviarioList.as_view(), name='TrechoRodoviario_list_operation'),
     path('trecho-rodoviario', TrechoRodoviarioList.as_view(), name='TrechoRodoviario_list'),
 
     path('tunel/<int:pk>', TunelDetail.as_view(), name='Tunel_detail'),
@@ -216,6 +226,7 @@ urlpatterns = [
     path('mangue', MangueList.as_view(), name='Mangue_list'),
 
     path('veg-restinga/<int:pk>', VegRestingaDetail.as_view(), name='VegRestinga_detail'),
-    path('veg-restinga', VegRestingaList.as_view(), name='VegRestinga_list')
+    path('veg-restinga', VegRestingaList.as_view(), name='VegRestinga_list'),
 
+    # path("icons/marker-icon.png", IconDetail.as_view(), name="Icon_detail")
 ]

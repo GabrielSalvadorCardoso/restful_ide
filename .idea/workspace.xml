@@ -2,23 +2,23 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0a709eb4-b154-4e02-ab0a-ced0709726a7" name="Default Changelist" comment="Generating images from geometries and executing chained operations">
-      <change afterPath="$PROJECT_DIR$/TODOS.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/hyper_resource/.idea/hyper_resource.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/hyper_resource/context.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/hyper_resource/resources/AbstractCollectionResource.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/hyper_resource/resources/AbstractResource.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/hyper_resource/resources/FeatureCollectionResource.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/hyper_resource/resources/FeatureResource.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/hyper_resource/resources/FeatureUtils.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/bcim/sld/unidades-federativas.sld" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/hyper_resource/resources/marker-icon.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bcim/contexts.py" beforeDir="false" afterPath="$PROJECT_DIR$/bcim/contexts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bcim/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/bcim/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bcim/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/bcim/serializers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bcim/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/bcim/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bcim/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/bcim/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hyper_resource/context.py" beforeDir="false" afterPath="$PROJECT_DIR$/hyper_resource/context.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/hyper_resource/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/hyper_resource/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/hyper_resource/operations.py" beforeDir="false" afterPath="$PROJECT_DIR$/hyper_resource/operations.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hyper_resource/resources/AbstractResource.py" beforeDir="false" afterPath="$PROJECT_DIR$/hyper_resource/resources/AbstractResource.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hyper_resource/resources/FeatureCollectionResource.py" beforeDir="false" afterPath="$PROJECT_DIR$/hyper_resource/resources/FeatureCollectionResource.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hyper_resource/resources/FeatureResource.py" beforeDir="false" afterPath="$PROJECT_DIR$/hyper_resource/resources/FeatureResource.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hyper_resource/resources/FeatureUtils.py" beforeDir="false" afterPath="$PROJECT_DIR$/hyper_resource/resources/FeatureUtils.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/restfull_ide/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/restfull_ide/settings.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/restfull_ide/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/restfull_ide/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/style.xml" beforeDir="false" afterPath="$PROJECT_DIR$/style.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -39,15 +39,19 @@
   <component name="ProjectId" id="1OdsuQVcxkEzaGJ6hpPMOb9lUag" />
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/hyper_resource" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/bcim/sld" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/hyper_resource" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/hyper_resource/resources" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/bcim/sld" />
+      <recent name="$PROJECT_DIR$/bcim" />
+      <recent name="$PROJECT_DIR$/hyper_resource/resources" />
+      <recent name="$PROJECT_DIR$/hyper_resource" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -97,7 +101,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="manage.py" />
-      <option name="PARAMETERS" value="runserver 192.168.0.11:8000" />
+      <option name="PARAMETERS" value="runserver localhost:8000" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -226,19 +230,34 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/hyper_resource/resources/FeatureUtils.py</url>
+          <line>101</line>
+          <option name="timeStamp" value="76" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/hyper_resource/resources/FeatureCollectionResource.py</url>
-          <line>132</line>
-          <option name="timeStamp" value="51" />
+          <line>151</line>
+          <option name="timeStamp" value="83" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/hyper_resource/resources/FeatureCollectionResource.py</url>
+          <line>180</line>
+          <option name="timeStamp" value="88" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/hyper_resource/resources/FeatureCollectionResource.py</url>
+          <line>100</line>
+          <option name="timeStamp" value="89" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/hyper_resource/resources/FeatureResource.py</url>
-          <line>64</line>
-          <option name="timeStamp" value="64" />
+          <line>184</line>
+          <option name="timeStamp" value="91" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/hyper_resource/resources/FeatureResource.py</url>
-          <line>172</line>
-          <option name="timeStamp" value="65" />
+          <url>file://$PROJECT_DIR$/bcim/contexts.py</url>
+          <line>71</line>
+          <option name="timeStamp" value="92" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

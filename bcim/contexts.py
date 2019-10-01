@@ -1,7 +1,7 @@
 from copy import deepcopy
 
 from django.contrib.gis.db.models import GeometryCollectionField, GeometryField, PointField, LineStringField, PolygonField, MultiPointField, MultiLineStringField, MultiPolygonField
-from django.db.models import AutoField, IntegerField, CharField
+from django.db.models import AutoField, IntegerField, CharField, DecimalField
 
 GEOMETRY_FIELD_NAMES = (GeometryField, PointField, LineStringField, PolygonField,
                         MultiPointField, MultiLineStringField, MultiPolygonField,
@@ -15,6 +15,7 @@ class AbstractContextResource(object):
             AutoField:      "https://schema.org/propertyID",
             IntegerField:   {"@id": "https://schema.org/value", "@type": "https://schema.org/Integer"},
             CharField:      {"@id": "https://schema.org/value", "@type": "https://schema.org/Text"},
+            DecimalField:   {"@id": "https://schema.org/value", "@type": "https://schema.org/Float"},
         }
         return deepcopy(term_definition_dict)
 
@@ -47,8 +48,34 @@ class FeatureCollectionContextResource(AbstractCollectionContextResource):
         return type(field) in GEOMETRY_FIELD_NAMES
 
     def create_context_for_fields(self, fields):
-        fields_no_geom = [field for field in fields if not self.is_geometry_field(field)]
+        fields_no_geom = []
+        for field in fields:
+            if self.is_geometry_field(field):
+                continue
+
+            if field.primary_key:
+                field.name = "id"
+            fields_no_geom.append(field)
+        #fields_no_geom = [field for field in fields if not self.is_geometry_field(field)]
+
         return super().create_context_for_fields(fields_no_geom)
+
+    def create_context_for_operations(self, operations_dict):
+        supperted_operation_dict = {"hydra:supportedOperation": []}
+        for name, operation in operations_dict.items():
+            supperted_operation_dict["hydra:supportedOperation"].append(operation.get_hydra_description())
+        return supperted_operation_dict
+
+    def get_supported_properties_for_fields(self, fields):
+        supported_propeties = {"hydra:supportedProperty": []}
+        for field in fields:
+            supported_propeties["hydra:supportedProperty"].append({
+                "hydra:property": field.name,
+                "hydra:writable": not field.primary_key and field.editable,
+                "hydra:readable": True,
+                "hydra:required": not field.null
+            })
+        return supported_propeties
 
 class FeatureContextResource(AbstractContextResource):
     # todo: must implement GeoJson terms definition

@@ -38,6 +38,35 @@ class Operation(object):
 class SpatialOperation(Operation):
     pass
 
+class Area(SpatialOperation):
+    name = "area"
+    return_type = float
+    parameters_types = []
+
+    def get_remaining_operations_snippet(self, parameters_str):
+        return "/".join(parameters_str.split("/")[1:])
+
+    def convert_parameters(self, parameters_str):
+        return None
+
+class Buffer(SpatialOperation):
+    name = "buffer"
+    return_type = GEOSGeometry
+    parameters_types = [float, int]
+
+    def get_remaining_operations_snippet(self, parameters_str):
+        return "/".join(parameters_str.split("/")[2:])
+
+    def convert_parameters(self, parameters_str):
+        try:
+            operation_name, params = parameters_str.split("/")[0], parameters_str.split("/")[1].split(PARAM_SEPARATOR)
+            if len(params) > 1:
+                return (float(params[0]), int(params[1]))
+            else:
+                return (float(params[0]), 8) # parameter clone default is False
+        except ValueError:
+            raise WrongParameterTypeError
+
 class Envelope(SpatialOperation):
     """
     params: None
@@ -75,12 +104,7 @@ class Tranform(SpatialOperation):
 class FeatureCollectionOperation(Operation):
     pass
 
-class Within(FeatureCollectionOperation):
-    name = "within"
-    return_type = FeatureCollectionModel
-    parameters_types = [GEOSGeometry]
-    context = OperationContext()
-
+class SpatialFilterOperation(FeatureCollectionOperation):
     def is_uri(self, operation_snippet):
         return operation_snippet.startswith("http://") or\
                operation_snippet.startswith("httpz://") or\
@@ -103,13 +127,28 @@ class Within(FeatureCollectionOperation):
                 return GEOSGeometry(json.dumps(json.loads(response.text)["geometry"]))
             raise WrongParameterTypeError
 
+class Crosses(SpatialFilterOperation):
+    name = "crosses"
+    return_type = FeatureCollectionModel
+    parameters_types = [GEOSGeometry]
+    context = OperationContext()
+
+class Within(SpatialFilterOperation):
+    name = "within"
+    return_type = FeatureCollectionModel
+    parameters_types = [GEOSGeometry]
+    context = OperationContext()
+
 SPATIAL_OPERATIONS = {
     Envelope.name: Envelope(),
-    Tranform.name: Tranform()
+    Tranform.name: Tranform(),
+    Buffer.name: Buffer(),
+    Area.name: Area()
 }
 
 FEATURE_COLLECTION_OPERATIONS = {
-    Within.name: Within()
+    Within.name: Within(),
+    Crosses.name: Crosses()
 }
 
 OPERATIONS_BY_TYPE = {

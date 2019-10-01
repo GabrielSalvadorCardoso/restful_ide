@@ -1,7 +1,10 @@
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
-from hyper_resource.resources.AbstractResource import AbstractResource, CONTENT_TYPE_JSONLD, JSON_CONTENT_TYPE
+from hyper_resource.resources.AbstractResource import AbstractResource, CONTENT_TYPE_JSONLD, JSON_CONTENT_TYPE, \
+    RequiredObject
 from hyper_resource.resources.FeatureCollectionResource import FeatureCollectionResource
 from hyper_resource.resources.FeatureResource import FeatureResource
 from .serializers import *
@@ -12,6 +15,13 @@ from .serializers import *
 #  ============================ BCIM Resource Classes  ============================
 
 class APIRoot(AbstractResource):
+
+    def add_entry_point_link_header(self, request, response):
+        entry_point_uri = request.build_absolute_uri()[:-1]
+        link_content = '<' + entry_point_uri + '>; rel="https://schema.org/EntryPoint", '
+        link_content += '<' + entry_point_uri + '.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"'
+        response["Link"] = link_content
+        #return response
 
     def get_entry_point_data(self, request, *args, **kwargs):
         return {
@@ -78,19 +88,20 @@ class APIRoot(AbstractResource):
             'tunel': reverse('bcim:Tunel_list', args=args, kwargs=kwargs, request=request),
             'brejo-pantano': reverse('bcim:BrejoPantano_list', args=args, kwargs=kwargs, request=request),
             'mangue': reverse('bcim:Mangue_list', args=args, kwargs=kwargs, request=request),
-            'veg-restinga': reverse('bcim:VegRestinga_list', args=args, kwargs=kwargs, request=request)
+            'veg-restinga': reverse('bcim:VegRestinga_list', args=args, kwargs=kwargs, request=request),
+            #'marker-icon.png': reverse('bcim:Icon_detail', args=args, kwargs=kwargs, request=request),
         }
 
     def get(self, request, *args, **kwargs):
         data = self.get_entry_point_data(request, *args, **kwargs)
         response = Response(data, status=status.HTTP_200_OK, content_type=JSON_CONTENT_TYPE)
-        response["Link"] = '<' + request.build_absolute_uri() + '>; rel="https://schema.org/EntryPoint"'
+        self.add_entry_point_link_header(request, response)
         return response
 
     # todo: maybe this content make more sanse in context.py
     def options(self, request, *args, **kwargs):
         entry_point_keys = self.get_entry_point_data(request, *args, **kwargs).keys()
-        context = {"@context": {}}
+        context = {"@context": {"hydra": "https://www.w3.org/ns/hydra/core#"}}
         for key in entry_point_keys:
             context["@context"].update({
                 key: {
@@ -99,8 +110,18 @@ class APIRoot(AbstractResource):
                 }
             })
 
+        context["hydra:supportedProperty"] = []
+
+        for key in entry_point_keys:
+            context["hydra:supportedProperty"].append({
+                "hydra:property": key,
+                "hydra:writable": False,
+                "hydra:readable": True,
+                "hydra:required": False
+            })
+
         response = Response(context, status=status.HTTP_200_OK, content_type=CONTENT_TYPE_JSONLD)
-        response["Link"] = '<' + request.build_absolute_uri() + '>; rel="https://schema.org/EntryPoint"'
+        self.add_entry_point_link_header(request, response)
         return response
         #return Response(context, status=status.HTTP_200_OK, content_type=CONTENT_TYPE_JSONLD)
 
@@ -281,8 +302,34 @@ class UnidadeConservacaoNaoSnucDetail(FeatureResource):
 class UnidadesFederativasList(FeatureCollectionResource):
     serializer_class = UnidadeFederacaoSerializer
 
+    def __init__(self):
+        super().__init__()
+        self.metadata_uri = "http://www.metadados.geo.ibge.gov.br/geonetwork_ibge/srv/por/csw?request=GetRecordById&service=CSW&version=2.0.2&elementSetName=full&id=ff2d4215-9843-4137-bad9-c15f2a8caa9e"
+        self.style_uri = "http://localhost:8000/api/restfull-ide/bcim/unidade-federativa.sld"
+
 class UnidadesFederativasDetail(FeatureResource):
     serializer_class = UnidadeFederacaoSerializer
+
+    def __init__(self):
+        super().__init__()
+        self.metadata_uri = "http://www.metadados.geo.ibge.gov.br/geonetwork_ibge/srv/por/csw?request=GetRecordById&service=CSW&version=2.0.2&elementSetName=full&id=ff2d4215-9843-4137-bad9-c15f2a8caa9e"
+
+    def basic_get(self, request, *args, **kwargs):
+        query_dict = {}
+
+        try:
+            query_dict["sigla"] = kwargs["sigla"]
+        except KeyError:
+            return super().basic_get(request, *args, **kwargs)
+
+        object = get_object_or_404(self.serializer_class.Meta.model, **query_dict)
+
+        if "operation" in kwargs:
+            return self.required_object_for_operation(request, object, *args, **kwargs)
+
+        contype_accept = self.feature_utils.content_type_by_accept(request, *args, kwargs)
+        serialize_data = self.serialize_object(request, object, contype_accept)
+        return RequiredObject(serialize_data, contype_accept, 200)
 
 class UnidadeProtecaoIntegralList(FeatureCollectionResource):
     serializer_class = UnidadeProtecaoIntegralSerializer
@@ -481,3 +528,15 @@ class VegRestingaList(FeatureCollectionResource):
 
 class VegRestingaDetail(FeatureResource):
     serializer_class = VegRestingaSerializer
+
+"""
+class IconDetail(AbstractResource):
+    def get(self, reqest, *args, **kwargs):
+        with open("marker-icon.png", "rb") as icon:
+            content = icon.read()
+        return HttpResponse(
+            content,
+            status=200,
+            content_type="image/png"
+        )
+"""

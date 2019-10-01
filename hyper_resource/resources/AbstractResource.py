@@ -11,6 +11,7 @@ CORS_HEADERS = {
 }
 JSON_CONTENT_TYPE = "application/json"
 CONTENT_TYPE_JSONLD = "application/ld+json"
+OCTET_STREAM_CONTENT_TYPE = "application/octet-stream"
 
 class NoAvailableRepresentationException(Exception):
     pass
@@ -43,6 +44,26 @@ class AbstractResource(APIView):
     def add_cors_headers(self, response):
         for header, value in CORS_HEADERS.items():
             response[header] = value
+
+    def default_content_types(self):
+        return [JSON_CONTENT_TYPE, OCTET_STREAM_CONTENT_TYPE, CONTENT_TYPE_JSONLD]
+
+    def available_content_types_for_type(self, object_type):
+        d = {
+            float: self.default_content_types(),
+            int: self.default_content_types(),
+            str: self.default_content_types(),
+            bool: self.default_content_types(),
+        }
+        try:
+            return d[object_type]
+        except KeyError:
+            raise NoAvailableRepresentationException("There's no available representations for this resource type: " + object_type)
+
+    def default_content_type_for_type(self, object_type):
+        return JSON_CONTENT_TYPE
+        #raise NoAvailableRepresentationException(
+        #    "There's no available representations for this resource type: " + object_type)
 
     def dispatch(self, request, *args, **kwargs):
         response = super().dispatch(request, *args, **kwargs)
