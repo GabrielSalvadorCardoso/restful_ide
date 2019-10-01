@@ -305,7 +305,7 @@ class UnidadesFederativasList(FeatureCollectionResource):
     def __init__(self):
         super().__init__()
         self.metadata_uri = "http://www.metadados.geo.ibge.gov.br/geonetwork_ibge/srv/por/csw?request=GetRecordById&service=CSW&version=2.0.2&elementSetName=full&id=ff2d4215-9843-4137-bad9-c15f2a8caa9e"
-        self.style_uri = "http://localhost:8000/api/restfull-ide/bcim/unidade-federativa.sld"
+        self.style_uri = "http://localhost:8000/api/restful-ide/bcim/unidade-federativa.sld"
 
 class UnidadesFederativasDetail(FeatureResource):
     serializer_class = UnidadeFederacaoSerializer

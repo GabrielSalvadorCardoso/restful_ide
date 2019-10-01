@@ -8,3 +8,6 @@
     TODOS
     - Implement hydra:supportedOperations in OPTIONS to FeatureCollectionResource
     - Implement cache
+
+    BUGLOG
+    - OPTIONS http://localhost:8000/api/restful-ide/bcim/trecho-rodoviario/crosses/http://localhost:8000/api/restful-ide/bcim/unidades-federativas/MG returning GET body

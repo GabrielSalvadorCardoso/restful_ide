@@ -1,4 +1,4 @@
-"""restfull_ide URL Configuration
+"""restful_ide URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/2.2/topics/http/urls/
@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib.gis import admin
 from django.urls import path, include
 
-app_name = "restfull_ide"
+app_name = "restful_ide"
 urlpatterns = [
-    path('api/restfull-ide/bcim/', include('bcim.urls', namespace="entrypoint"))#, name="entrypoint"),
+    path('api/restful-ide/bcim/', include('bcim.urls', namespace="entrypoint"))#, name="entrypoint"),
 ]

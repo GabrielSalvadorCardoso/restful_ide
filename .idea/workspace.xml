@@ -2,23 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0a709eb4-b154-4e02-ab0a-ced0709726a7" name="Default Changelist" comment="Generating images from geometries and executing chained operations">
-      <change afterPath="$PROJECT_DIR$/bcim/sld/unidades-federativas.sld" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/hyper_resource/resources/marker-icon.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/restful_ide/settings.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/restful_ide/urls.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/restful_ide/wsgi.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/restful_ide.iml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bcim/contexts.py" beforeDir="false" afterPath="$PROJECT_DIR$/bcim/contexts.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bcim/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/bcim/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bcim/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/bcim/serializers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bcim/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/bcim/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TODOS.txt" beforeDir="false" afterPath="$PROJECT_DIR$/TODOS.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bcim/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/bcim/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hyper_resource/context.py" beforeDir="false" afterPath="$PROJECT_DIR$/hyper_resource/context.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/hyper_resource/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/hyper_resource/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hyper_resource/operations.py" beforeDir="false" afterPath="$PROJECT_DIR$/hyper_resource/operations.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hyper_resource/resources/AbstractResource.py" beforeDir="false" afterPath="$PROJECT_DIR$/hyper_resource/resources/AbstractResource.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hyper_resource/resources/FeatureCollectionResource.py" beforeDir="false" afterPath="$PROJECT_DIR$/hyper_resource/resources/FeatureCollectionResource.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/hyper_resource/resources/FeatureResource.py" beforeDir="false" afterPath="$PROJECT_DIR$/hyper_resource/resources/FeatureResource.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hyper_resource/resources/FeatureUtils.py" beforeDir="false" afterPath="$PROJECT_DIR$/hyper_resource/resources/FeatureUtils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/restfull_ide/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/restfull_ide/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/restfull_ide/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/restfull_ide/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/manage.py" beforeDir="false" afterPath="$PROJECT_DIR$/manage.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/restful_ide/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/restful_ide/__init__.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -39,7 +35,7 @@
   <component name="ProjectId" id="1OdsuQVcxkEzaGJ6hpPMOb9lUag" />
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/bcim/sld" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
@@ -66,9 +62,9 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.restfull_ide">
+  <component name="RunManager" selected="Python.restful_ide">
     <configuration name="api_root_generator" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="restfull_ide" />
+      <module name="restful_ide" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -88,8 +84,8 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="restfull_ide" type="PythonConfigurationType" factoryName="Python">
-      <module name="restfull_ide" />
+    <configuration name="restful_ide" type="PythonConfigurationType" factoryName="Python">
+      <module name="restful_ide" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -110,7 +106,7 @@
       <method v="2" />
     </configuration>
     <configuration name="serializer_generator" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="restfull_ide" />
+      <module name="restful_ide" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -131,7 +127,7 @@
       <method v="2" />
     </configuration>
     <configuration name="urls_generator" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="restfull_ide" />
+      <module name="restful_ide" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -152,7 +148,7 @@
       <method v="2" />
     </configuration>
     <configuration name="view_generator" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="restfull_ide" />
+      <module name="restful_ide" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -173,7 +169,7 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python.restfull_ide" />
+      <item itemvalue="Python.restful_ide" />
       <item itemvalue="Python.serializer_generator" />
       <item itemvalue="Python.view_generator" />
       <item itemvalue="Python.urls_generator" />

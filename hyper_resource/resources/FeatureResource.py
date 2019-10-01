@@ -184,7 +184,7 @@ select * from bcim_2016.tra_trecho_rodoviario_l where gid = 40159
         pk_dict["pk"] = kwargs["pk"]
         object = get_object_or_404(self.serializer_class.Meta.model, **pk_dict)
 
-        # http://192.168.0.11:8000/api/restfull-ide/bcim/unidades-federativas/1/envelope/transform/3857/envelope/transform/3674
+        # http://192.168.0.11:8000/api/restful-ide/bcim/unidades-federativas/1/envelope/transform/3857/envelope/transform/3674
         if "operation" in kwargs:
             return self.required_object_for_operation(request, object, *args, **kwargs)
 

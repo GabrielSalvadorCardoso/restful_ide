@@ -6,12 +6,12 @@ class FeatureCollectionModel(models.Model):
     #    abstract = True
 
 
-    # example: http://localhost:8000/api/restfull-ide/bcim/trecho-rodoviario/crosses/http://localhost:8000/api/restfull-ide/bcim/unidades-federativas/MG
+    # example: http://localhost:8000/api/restful-ide/bcim/trecho-rodoviario/crosses/http://localhost:8000/api/restful-ide/bcim/unidades-federativas/MG
     @staticmethod
     def crosses(object_class, geometry):
         return object_class.objects.filter(geom__crosses=geometry)
 
-    # http://localhost:8000/api/restfull-ide/bcim/capital/within/http://localhost:8000/api/restfull-ide/bcim/unidades-federativas/SP/
+    # http://localhost:8000/api/restful-ide/bcim/capital/within/http://localhost:8000/api/restful-ide/bcim/unidades-federativas/SP/
     @staticmethod
     def within(object_class, geometry):
         return object_class.objects.filter(geom__within=geometry)

@@ -1,5 +1,5 @@
 """
-WSGI config for restfull_ide project.
+WSGI config for restful_ide project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'restfull_ide.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'restful_ide.settings')
 
 application = get_wsgi_application()
