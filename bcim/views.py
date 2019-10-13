@@ -21,7 +21,6 @@ class APIRoot(AbstractResource):
         link_content = '<' + entry_point_uri + '>; rel="https://schema.org/EntryPoint", '
         link_content += '<' + entry_point_uri + '.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"'
         response["Link"] = link_content
-        #return response
 
     def get_entry_point_data(self, request, *args, **kwargs):
         return {
@@ -98,7 +97,7 @@ class APIRoot(AbstractResource):
         self.add_entry_point_link_header(request, response)
         return response
 
-    # todo: maybe this content make more sanse in context.py
+    # todo: maybe this content make more sanse in contexts.py
     def options(self, request, *args, **kwargs):
         entry_point_keys = self.get_entry_point_data(request, *args, **kwargs).keys()
         context = {"@context": {"hydra": "https://www.w3.org/ns/hydra/core#"}}
@@ -305,6 +304,7 @@ class UnidadesFederativasList(FeatureCollectionResource):
     def __init__(self):
         super().__init__()
         self.metadata_uri = "http://www.metadados.geo.ibge.gov.br/geonetwork_ibge/srv/por/csw?request=GetRecordById&service=CSW&version=2.0.2&elementSetName=full&id=ff2d4215-9843-4137-bad9-c15f2a8caa9e"
+        #self.metadata_uri = "http://www.metadados.inde.gov.br/geonetwork/srv/en/resources.get?request=GetRecordById&service=CSW&version=2.0.2&elementSetName=full&id=425971af-1be0-4f32-81c4-a2d78bb01a85"
         self.style_uri = "http://localhost:8000/api/restful-ide/bcim/unidade-federativa.sld"
 
 class UnidadesFederativasDetail(FeatureResource):
@@ -313,6 +313,7 @@ class UnidadesFederativasDetail(FeatureResource):
     def __init__(self):
         super().__init__()
         self.metadata_uri = "http://www.metadados.geo.ibge.gov.br/geonetwork_ibge/srv/por/csw?request=GetRecordById&service=CSW&version=2.0.2&elementSetName=full&id=ff2d4215-9843-4137-bad9-c15f2a8caa9e"
+        self.style_uri = "http://localhost:8000/api/restful-ide/bcim/unidade-federativa.sld"
 
     def basic_get(self, request, *args, **kwargs):
         query_dict = {}

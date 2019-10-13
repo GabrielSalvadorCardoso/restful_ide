@@ -1,16 +1,18 @@
 import json
+from copy import deepcopy
 
 from django.contrib.gis.geos import GEOSGeometry, Point, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 
-from bcim.contexts import FeatureContextResource
+from hyper_resource.contexts import FeatureContextResource
 from hyper_resource import operations
 from hyper_resource.models import FeatureModel
 from hyper_resource.operations import InvalidOperationException
 from hyper_resource.resources.AbstractResource import AbstractResource, RequiredObject, JSON_CONTENT_TYPE, \
-    CONTENT_TYPE_JSONLD, NoAvailableRepresentationException
+    CONTENT_TYPE_JSONLD, NoAvailableRepresentationException, CORS_HEADERS
+from hyper_resource.resources.FeatureCollectionResource import OPERATION_KWARGS_LABEL
 from hyper_resource.resources.FeatureUtils import FeatureUtils, CONTENT_TYPE_GEOJSON, CONTENT_TYPE_IMAGE_PNG
 
 
@@ -19,7 +21,54 @@ class FeatureResource(AbstractResource):
 
     def __init__(self):
         super().__init__()
+        self.metadata_uri = ""
+        self.style_uri = ""
         self.feature_utils = FeatureUtils()
+
+    def dispatch(self, request, *args, **kwargs):
+        response = super().dispatch(request, *args, **kwargs)
+        if OPERATION_KWARGS_LABEL in kwargs:
+            self.add_cors_headers_for_operation(response)
+            self.add_link_header_for_operation(request, response)
+            return response
+
+        self.add_simple_path_cors_headers(response)
+        self.add_simple_path_link_header(request, response)
+        return response
+
+    def add_simple_path_link_header(self, request, response):
+        simple_path_uri = request.build_absolute_uri() if request.build_absolute_uri()[-1] != "/" else request.build_absolute_uri()[:-1]
+        entry_point_uri = "/".join(simple_path_uri.split("/")[:-2])
+        link_content = '<' + entry_point_uri + '>; rel="up", '
+        link_content += '<' + simple_path_uri + '.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json", '
+        link_content += '<' + self.metadata_uri + '>; rel="metadata", '
+        link_content += '<' + self.style_uri + '>; rel="stylesheet"'
+        response["Link"] = link_content
+        return response
+
+    def add_link_header_for_operation(self, request, response):
+        simple_path_uri = request.build_absolute_uri() if request.build_absolute_uri()[-1] != "/" else request.build_absolute_uri()[:-1]
+        #entry_point_uri = "/".join(simple_path_uri.split("/")[:-2])
+        link_content = '<' + "http://localhost:8000/api/restful-ide/bcim" + '>; rel="up", '
+        link_content += '<' + simple_path_uri + '.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json", '
+        #link_content += '<' + self.metadata_uri + '>; rel="metadata", '
+        #link_content += '<' + self.style_uri + '>; rel="stylesheet"'
+        response["Link"] = link_content
+        return response
+
+    def add_simple_path_cors_headers(self, response):
+        simple_path_cors_headers = deepcopy(CORS_HEADERS)
+        simple_path_cors_headers["Access-Control-Allow-Methods"] = "GET, HEAD, OPTIONS, PUT, DELETE"
+        for header, value in simple_path_cors_headers.items():
+            response[header] = value
+        response["Allow"] = "GET, HEAD, OPTIONS, PUT, DELETE"
+
+    def add_cors_headers_for_operation(self, response):
+        simple_path_cors_headers = deepcopy(CORS_HEADERS)
+        simple_path_cors_headers["Access-Control-Allow-Methods"] = "GET, HEAD, OPTIONS"
+        for header, value in simple_path_cors_headers.items():
+            response[header] = value
+        response["Allow"] = "GET, HEAD, OPTIONS"
 
     # ------------------- content type decider methods -------------------
 
@@ -157,7 +206,6 @@ select * from bcim_2016.tra_trecho_rodoviario_l where gid = 40159
                 status=required_object.status_code,
                 content_type=CONTENT_TYPE_IMAGE_PNG
             )
-
         return Response(
             required_object.representation_object,
             status=required_object.status_code,

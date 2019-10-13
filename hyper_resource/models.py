@@ -1,7 +1,14 @@
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import GeometryCollection
+from django.db.models import Q
 
-class FeatureCollectionModel(models.Model):
+
+class CollectionModel(models.Model):
+    @staticmethod
+    def filter(object_class, q_object):
+        return object_class.objects.filter(q_object)
+
+class FeatureCollectionModel(CollectionModel):
     #class Meta:
     #    abstract = True
 

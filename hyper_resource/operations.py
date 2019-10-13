@@ -3,9 +3,10 @@ import json
 import requests
 from django.contrib.gis.geos import Polygon, GEOSGeometry, MultiPolygon, MultiLineString, MultiPoint, LineString, Point, \
     GEOSException
+from django.db.models import Q
 
-from hyper_resource.context import OperationContext
-from hyper_resource.models import FeatureModel, FeatureCollectionModel
+from hyper_resource.contexts import OperationContext
+from hyper_resource.models import FeatureModel, FeatureCollectionModel, CollectionModel
 
 
 class TooMuchParametersError(Exception):
@@ -18,6 +19,7 @@ class InvalidOperationException(Exception):
     pass
 
 PARAM_SEPARATOR = "&"
+
 
 class Operation(object):
     name = "operation" # must be overided
@@ -101,7 +103,34 @@ class Tranform(SpatialOperation):
             raise WrongParameterTypeError
 
 
-class FeatureCollectionOperation(Operation):
+class CollectionOperation(Operation):
+    pass
+
+class Filter(CollectionOperation):
+    name = "filter"
+    return_type = CollectionModel
+    parameters_types = [Q]
+    context = OperationContext()
+
+    def convert_to_expression(self, parameters_str):
+        d = {
+            "eq": self.q_object_equals
+        }
+        operator = parameters_str.split("/")[2]
+        return d[operator](parameters_str)
+
+    # todo: convert value after 'eq' operator to same attribute type before 'eq' operator
+    def q_object_equals(self, parameters_str):
+        attribute_name = parameters_str.split("/")[1]
+        value = parameters_str.split("/")[3]
+        d = {attribute_name: value}
+        return Q(**d)
+
+    # todo: not implemented yet
+    def convert_parameters(self, parameters_str):
+        return (self.convert_to_expression(parameters_str),)
+
+class FeatureCollectionOperation(CollectionOperation):
     pass
 
 class SpatialFilterOperation(FeatureCollectionOperation):
@@ -147,6 +176,7 @@ SPATIAL_OPERATIONS = {
 }
 
 FEATURE_COLLECTION_OPERATIONS = {
+    Filter.name: Filter(), # todo: must be in superclass
     Within.name: Within(),
     Crosses.name: Crosses()
 }

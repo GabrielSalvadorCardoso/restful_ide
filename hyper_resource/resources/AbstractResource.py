@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.negotiation import BaseContentNegotiation
-from bcim.contexts import AbstractContextResource
+from hyper_resource.contexts import AbstractContextResource
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -12,6 +12,9 @@ CORS_HEADERS = {
 JSON_CONTENT_TYPE = "application/json"
 CONTENT_TYPE_JSONLD = "application/ld+json"
 OCTET_STREAM_CONTENT_TYPE = "application/octet-stream"
+
+OPERATION_KWARGS_LABEL = "operation"
+EXTENSION_KWARGS_LABEL = "extension"
 
 class NoAvailableRepresentationException(Exception):
     pass
@@ -77,4 +80,6 @@ class AbstractResource(APIView):
 
     def options(self, request, *args, **kwargs):
         context = self.context_class().create_context_for_fields(self.serializer_class.Meta.model()._meta.fields)
+        supported_property_context = self.context_class().get_supported_properties_for_fields(self.serializer_class.Meta.model()._meta.fields)
+        context.update(supported_property_context)
         return Response(context, status=status.HTTP_200_OK, content_type=CONTENT_TYPE_JSONLD)

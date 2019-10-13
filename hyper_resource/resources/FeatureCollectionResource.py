@@ -7,17 +7,14 @@ from django.http import HttpResponse
 from rest_framework import status
 from rest_framework.response import Response
 
-from bcim.contexts import FeatureCollectionContextResource
+from hyper_resource.contexts import FeatureCollectionContextResource
 from hyper_resource import operations
 from hyper_resource.models import FeatureCollectionModel, FeatureModel
 from hyper_resource.operations import InvalidOperationException
 from hyper_resource.resources.AbstractCollectionResource import AbstractCollectionResource
 from hyper_resource.resources.AbstractResource import RequiredObject, JSON_CONTENT_TYPE, \
-    NoAvailableRepresentationException, CORS_HEADERS, CONTENT_TYPE_JSONLD
+    NoAvailableRepresentationException, CORS_HEADERS, CONTENT_TYPE_JSONLD, OPERATION_KWARGS_LABEL
 from hyper_resource.resources.FeatureUtils import FeatureUtils, CONTENT_TYPE_GEOJSON, CONTENT_TYPE_IMAGE_PNG
-OPERATION_KWARGS_LABEL = "operation"
-EXTENSION_KWARGS_LABEL = "extension"
-
 
 class FeatureCollectionResource(AbstractCollectionResource):
     context_class = FeatureCollectionContextResource
@@ -34,7 +31,7 @@ class FeatureCollectionResource(AbstractCollectionResource):
         link_content = '<' + entry_point_uri + '>; rel="up", '
         link_content += '<' + simple_path_uri + '.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json", '
         link_content += '<' + self.metadata_uri + '>; rel="metadata", '
-        link_content += '<' + self.style_uri + '>; rel="style"'
+        link_content += '<' + self.style_uri + '>; rel="stylesheet"'
         response["Link"] = link_content
         return response
 
@@ -141,7 +138,6 @@ class FeatureCollectionResource(AbstractCollectionResource):
 
         queryset = self.serializer_class.Meta.model.objects.all()
         contype_accept = self.feature_utils.content_type_by_accept(request, *args, kwargs)
-        contype_accept = self.feature_utils.content_type_by_accept(request, *args, kwargs)
         serialize_data = self.serialize_object(request, queryset, contype_accept)
         return RequiredObject(serialize_data, contype_accept, 200)
 
@@ -165,7 +161,7 @@ class FeatureCollectionResource(AbstractCollectionResource):
 
     def required_object_for_operation(self, request, object, *args, **kwargs):
         try:
-            operation_result = self.execute_operation(object, kwargs["operation"])
+            operation_result = self.execute_operation(object, kwargs[OPERATION_KWARGS_LABEL])
             contype_type = self.content_type_for_object_type(request, type(operation_result))
             serialize_data = self.serialize_object(request, operation_result, contype_type)
             return RequiredObject(serialize_data, contype_type, 200)
@@ -179,6 +175,7 @@ class FeatureCollectionResource(AbstractCollectionResource):
     def options(self, request, *args, **kwargs):
         context = {}
         term_definition_context = self.context_class().create_context_for_fields(self.serializer_class.Meta.model()._meta.fields)
+        # todo: if 'filter' operations is applied, there is no operations left to do (hydra:supportedOperation: [])
         supported_operation_context = self.context_class().create_context_for_operations(operations.OPERATIONS_BY_TYPE[FeatureCollectionModel])
         supported_property_context = self.context_class().get_supported_properties_for_fields(self.serializer_class.Meta.model()._meta.fields)
 
