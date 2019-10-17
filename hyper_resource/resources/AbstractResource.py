@@ -138,16 +138,33 @@ class AbstractResource(APIView):
         self.add_cors_headers(response)
         return response
 
-    def basic_get(self, request, *args, **kwargs):
-        object = self.serializer_class.Meta.model.objects.get(pk=kwargs['pk'])
-        serializer = self.serializer_class(object, context={'request': request})
-        return RequiredObject(serializer.data, JSON_CONTENT_TYPE, 200)
+    def get(self, request, *args, **kwargs):
+        required_object = self.basic_get(request, *args, **kwargs)
+        return Response(
+            required_object.representation_object,
+            status=required_object.status_code,
+            content_type=JSON_CONTENT_TYPE
+        )
 
+    def basic_get(self, request, *args, **kwargs):
+        if self.path_has_only_attributes(kwargs):
+            return self.required_object_for_attributes(request, *args, **kwargs)
+
+        #object = self.serializer_class.Meta.model.objects.get(pk=kwargs['pk'])
+        object = self.get_object(**kwargs)
+
+        contype_accept = self.content_type_by_accept(request, *args, kwargs)
+        serializer = self.serializer_class(object, context={'request': request})
+        return RequiredObject(serializer.data, contype_accept, 200)
+
+    # ------------------- OPTIONS response methods -------------------
     def base_required_context(self, request, *args, **kwargs):
         context = {}
         term_definition_context = self.context_class().create_context_for_fields(self.serializer_class.Meta.model()._meta.fields)
         #supported_operation_context = self.context_class().create_context_for_operations(operations.OPERATIONS_BY_TYPE[FeatureModel])
+        supported_properties_context = self.context_class().get_supported_properties_for_fields(self.serializer_class.Meta.model()._meta.fields)
 
+        context.update(supported_properties_context)
         context.update(term_definition_context)
         #context.update(supported_operation_context)
 
@@ -182,10 +199,12 @@ class AbstractResource(APIView):
         return RequiredObject(context, CONTENT_TYPE_JSONLD, 200)
 
     def options(self, request, *args, **kwargs):
-        context = self.context_class().create_context_for_fields(self.serializer_class.Meta.model()._meta.fields)
-        supported_property_context = self.context_class().get_supported_properties_for_fields(self.serializer_class.Meta.model()._meta.fields)
-        context.update(supported_property_context)
-        return Response(context, status=status.HTTP_200_OK, content_type=CONTENT_TYPE_JSONLD)
+        required_object = self.basic_options(request, *args, **kwargs)
+        return Response(
+            required_object.representation_object,
+            status=required_object.status_code,
+            content_type=required_object.content_type
+        )
 
     def basic_options(self, request, *args, **kwargs):
         if self.path_has_only_attributes(kwargs):

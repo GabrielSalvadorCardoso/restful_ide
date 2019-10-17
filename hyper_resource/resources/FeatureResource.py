@@ -109,20 +109,14 @@ class FeatureResource(AbstractResource):
 
     # ------------------- OPTIONS response methods -------------------
 
-    def options(self, request, *args, **kwargs):
-        required_object = self.basic_options(request, *args, **kwargs)
-        return Response(
-            required_object.representation_object,
-            status=required_object.status_code,
-            content_type=required_object.content_type
-        )
-
     def base_required_context(self, request, *args, **kwargs):
         context = {}
         term_definition_context = self.context_class().create_context_for_fields(self.serializer_class.Meta.model()._meta.fields)
         supported_operation_context = self.context_class().create_context_for_operations(operations.OPERATIONS_BY_TYPE[FeatureModel])
+        supported_properties_context = self.context_class().get_supported_properties_for_fields(self.serializer_class.Meta.model()._meta.fields)
 
         context.update(term_definition_context)
+        context.update(supported_properties_context)
         context.update(supported_operation_context)
 
         return RequiredObject(context, CONTENT_TYPE_JSONLD, 200)
