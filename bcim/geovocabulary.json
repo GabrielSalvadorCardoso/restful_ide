@@ -1,0 +1,27 @@
+{
+  "@context": {
+    "hyper": "http://localhost:8000/",
+    "schema": "http://schema.org/",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  },
+  "@id": "hyper:geocode",
+  "@type": "rdf:Property",
+  "rdfs:label": "geocode",
+  "rdfs:comment": "A code that represents a geographic entity (location or object)",
+  "schema:rangeIncludes": {
+    "@id": "schema:Text"
+  }
+}
+
+{
+
+
+
+  "schema:domainIncludes": {
+    "@id": "schema:Article"
+  },
+  "schema:rangeIncludes": {
+    "@id": "schema:Integer"
+  }
+}

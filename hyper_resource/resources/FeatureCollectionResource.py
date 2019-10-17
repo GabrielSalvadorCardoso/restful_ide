@@ -13,7 +13,7 @@ from hyper_resource.models import FeatureCollectionModel, FeatureModel
 from hyper_resource.operations import InvalidOperationException
 from hyper_resource.resources.AbstractCollectionResource import AbstractCollectionResource
 from hyper_resource.resources.AbstractResource import RequiredObject, JSON_CONTENT_TYPE, \
-    NoAvailableRepresentationException, CORS_HEADERS, CONTENT_TYPE_JSONLD, OPERATION_KWARGS_LABEL
+    NoAvailableRepresentationException, CORS_HEADERS, CONTENT_TYPE_JSONLD, OPERATION_OR_ATTRIBUTES_KWARGS_LABEL
 from hyper_resource.resources.FeatureUtils import FeatureUtils, CONTENT_TYPE_GEOJSON, CONTENT_TYPE_IMAGE_PNG
 
 class FeatureCollectionResource(AbstractCollectionResource):
@@ -44,7 +44,7 @@ class FeatureCollectionResource(AbstractCollectionResource):
 
     def dispatch(self, request, *args, **kwargs):
         response = super().dispatch(request, *args, **kwargs)
-        if OPERATION_KWARGS_LABEL in kwargs:
+        if OPERATION_OR_ATTRIBUTES_KWARGS_LABEL in kwargs:
             return response
 
         self.add_simple_path_cors_headers(response)
@@ -133,7 +133,7 @@ class FeatureCollectionResource(AbstractCollectionResource):
 
     def basic_get(self, request, *args, **kwargs):
         empty_object = self.serializer_class.Meta.model()
-        if OPERATION_KWARGS_LABEL in kwargs:
+        if OPERATION_OR_ATTRIBUTES_KWARGS_LABEL in kwargs:
             return self.required_object_for_operation(request, empty_object, *args, **kwargs)
 
         queryset = self.serializer_class.Meta.model.objects.all()
@@ -161,7 +161,7 @@ class FeatureCollectionResource(AbstractCollectionResource):
 
     def required_object_for_operation(self, request, object, *args, **kwargs):
         try:
-            operation_result = self.execute_operation(object, kwargs[OPERATION_KWARGS_LABEL])
+            operation_result = self.execute_operation(object, kwargs[OPERATION_OR_ATTRIBUTES_KWARGS_LABEL])
             contype_type = self.content_type_for_object_type(request, type(operation_result))
             serialize_data = self.serialize_object(request, operation_result, contype_type)
             return RequiredObject(serialize_data, contype_type, 200)

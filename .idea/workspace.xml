@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="0a709eb4-b154-4e02-ab0a-ced0709726a7" name="Default Changelist" comment="Generating images from geometries and executing chained operations">
-      <change afterPath="$PROJECT_DIR$/hyper_resource/contexts.py" afterDir="false" />
+    <list default="true" id="0a709eb4-b154-4e02-ab0a-ced0709726a7" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/bcim/geovocabulary.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bcim/contexts.py" beforeDir="false" afterPath="$PROJECT_DIR$/bcim/contexts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bcim/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/bcim/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bcim/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/bcim/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hyper_resource/context.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/hyper_resource/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/hyper_resource/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hyper_resource/operations.py" beforeDir="false" afterPath="$PROJECT_DIR$/hyper_resource/operations.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hyper_resource/contexts.py" beforeDir="false" afterPath="$PROJECT_DIR$/hyper_resource/contexts.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/hyper_resource/resources/AbstractCollectionResource.py" beforeDir="false" afterPath="$PROJECT_DIR$/hyper_resource/resources/AbstractCollectionResource.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/hyper_resource/resources/AbstractResource.py" beforeDir="false" afterPath="$PROJECT_DIR$/hyper_resource/resources/AbstractResource.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/hyper_resource/resources/FeatureCollectionResource.py" beforeDir="false" afterPath="$PROJECT_DIR$/hyper_resource/resources/FeatureCollectionResource.py" afterDir="false" />
@@ -33,7 +31,7 @@
   <component name="ProjectId" id="1OdsuQVcxkEzaGJ6hpPMOb9lUag" />
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../anatel" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
@@ -200,7 +198,14 @@
       <option name="project" value="LOCAL" />
       <updated>1567629289435</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Added filter operation">
+      <created>1570934176598</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1570934176599</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -218,7 +223,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Generating images from geometries and executing chained operations" />
-    <option name="LAST_COMMIT_MESSAGE" value="Generating images from geometries and executing chained operations" />
+    <MESSAGE value="Added filter operation" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added filter operation" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -230,13 +236,18 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/hyper_resource/resources/FeatureResource.py</url>
-          <line>232</line>
-          <option name="timeStamp" value="91" />
+          <line>275</line>
+          <option name="timeStamp" value="108" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/hyper_resource/resources/FeatureResource.py</url>
-          <line>29</line>
-          <option name="timeStamp" value="93" />
+          <url>file://$PROJECT_DIR$/hyper_resource/resources/AbstractResource.py</url>
+          <line>190</line>
+          <option name="timeStamp" value="114" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/hyper_resource/resources/AbstractResource.py</url>
+          <line>168</line>
+          <option name="timeStamp" value="115" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

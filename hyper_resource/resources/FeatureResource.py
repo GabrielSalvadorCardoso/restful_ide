@@ -11,8 +11,8 @@ from hyper_resource import operations
 from hyper_resource.models import FeatureModel
 from hyper_resource.operations import InvalidOperationException
 from hyper_resource.resources.AbstractResource import AbstractResource, RequiredObject, JSON_CONTENT_TYPE, \
-    CONTENT_TYPE_JSONLD, NoAvailableRepresentationException, CORS_HEADERS
-from hyper_resource.resources.FeatureCollectionResource import OPERATION_KWARGS_LABEL
+    CONTENT_TYPE_JSONLD, NoAvailableRepresentationException, CORS_HEADERS, ATTRIBUTES_SEPARATOR
+from hyper_resource.resources.FeatureCollectionResource import OPERATION_OR_ATTRIBUTES_KWARGS_LABEL
 from hyper_resource.resources.FeatureUtils import FeatureUtils, CONTENT_TYPE_GEOJSON, CONTENT_TYPE_IMAGE_PNG
 
 
@@ -27,7 +27,7 @@ class FeatureResource(AbstractResource):
 
     def dispatch(self, request, *args, **kwargs):
         response = super().dispatch(request, *args, **kwargs)
-        if OPERATION_KWARGS_LABEL in kwargs:
+        if OPERATION_OR_ATTRIBUTES_KWARGS_LABEL in kwargs:
             self.add_cors_headers_for_operation(response)
             self.add_link_header_for_operation(request, response)
             return response
@@ -99,6 +99,14 @@ class FeatureResource(AbstractResource):
             return contype_accept
         return self.default_content_type_for_type(object_type)
 
+    def content_type_for_attributes(self, request, attributes_dict, *args, **kwargs):
+        if not self.serializer_class.Meta.geo_field in attributes_dict:
+            return super().content_type_for_attributes(request, attributes_dict)
+        contype_accept = self.feature_utils.content_type_by_accept(request, *args, **kwargs)
+        if contype_accept in self.feature_utils.default_content_types():
+            return contype_accept
+        return CONTENT_TYPE_GEOJSON
+
     # ------------------- OPTIONS response methods -------------------
 
     def options(self, request, *args, **kwargs):
@@ -109,11 +117,6 @@ class FeatureResource(AbstractResource):
             content_type=required_object.content_type
         )
 
-    def basic_options(self, request, *args, **kwargs):
-        if "operation" in kwargs:
-            return self.required_context_for_operation(request, *args, **kwargs)
-        return self.base_required_context(request, *args, **kwargs)
-
     def base_required_context(self, request, *args, **kwargs):
         context = {}
         term_definition_context = self.context_class().create_context_for_fields(self.serializer_class.Meta.model()._meta.fields)
@@ -122,16 +125,6 @@ class FeatureResource(AbstractResource):
         context.update(term_definition_context)
         context.update(supported_operation_context)
 
-        return RequiredObject(context, CONTENT_TYPE_JSONLD, 200)
-
-    def required_context_for_operation(self, request, *args, **kwargs):
-        context = {}
-        operation_return_type = self.get_operation_return_type(kwargs["operation"])
-        try:
-            supported_operation_context = self.context_class().create_context_for_operations(operations.OPERATIONS_BY_TYPE[operation_return_type])
-        except KeyError:
-            supported_operation_context = {"hydra:supportedOperation": []}
-        context.update(supported_operation_context)
         return RequiredObject(context, CONTENT_TYPE_JSONLD, 200)
 
     # ------------------- operation methods -------------------
@@ -185,7 +178,7 @@ select * from bcim_2016.tra_trecho_rodoviario_l where gid = 40159
         rem_oper_snippert = operation.get_remaining_operations_snippet(operation_snippet)
         if rem_oper_snippert:
             return self.execute_operation(operation_result, rem_oper_snippert)
-        return operation_result
+        return (operation_name, operation_result)
 
     def is_operation_for_type(self, operation_name, object_type):
         try:
@@ -212,12 +205,25 @@ select * from bcim_2016.tra_trecho_rodoviario_l where gid = 40159
             content_type=CONTENT_TYPE_GEOJSON
         )
 
+    """
+    def get_objects_for_attributes(self, request, *args, **kwargs):
+        query_dict = self.get_object_query_dict(**kwargs)
+        attribute_arr = kwargs[OPERATION_OR_ATTRIBUTES_KWARGS_LABEL].split(ATTRIBUTES_SEPARATOR)
+        return self.serializer_class.Meta.model.objects.filter(**query_dict).values(*attribute_arr).first()
+
+    def required_object_for_attributes(self, request, *args, **kwargs):
+        attributes_dict = self.get_objects_for_attributes(request, *args, **kwargs)
+        contype_type = self.content_type_for_attributes(request, attributes_dict, *args, **kwargs)
+        serialized_data = self.serialize_object_for_attributes(request, attributes_dict, contype_type)
+        return RequiredObject(serialized_data, contype_type, 200)
+    """
+
     def required_object_for_operation(self, request, object, *args, **kwargs):
         try:
             # todo: need to decide content-type (by operation return type and accept) and serialization
-            operation_result = self.execute_operation(object, kwargs["operation"])
+            operation_name, operation_result = self.execute_operation(object, kwargs[OPERATION_OR_ATTRIBUTES_KWARGS_LABEL])
             contype_type = self.content_type_for_object_type(request, type(operation_result))
-            operation_name = self.get_operation_name_from_path(kwargs["operation"])
+            #operation_name = self.get_operation_name_from_path(kwargs[OPERATION_OR_ATTRIBUTES_KWARGS_LABEL])
             serialize_data = self.serialize_object(request, operation_result, contype_type, operation_name=operation_name)
             return RequiredObject(serialize_data, contype_type, 200)
 
@@ -227,13 +233,25 @@ select * from bcim_2016.tra_trecho_rodoviario_l where gid = 40159
                 JSON_CONTENT_TYPE, 400
             )
 
-    def basic_get(self, request, *args, **kwargs):
+    """
+    def get_object(self, **kwargs):
+        query_dict = self.get_object_query_dict(**kwargs)
+        return get_object_or_404(self.serializer_class.Meta.model, **query_dict)
+
+    def get_object_query_dict(self, **kwargs):
         pk_dict = {}
         pk_dict["pk"] = kwargs["pk"]
-        object = get_object_or_404(self.serializer_class.Meta.model, **pk_dict)
+        return pk_dict
+    """
+
+    def basic_get(self, request, *args, **kwargs):
+        if self.path_has_only_attributes(kwargs):
+            return self.required_object_for_attributes(request, *args, **kwargs)
+
+        object = self.get_object(**kwargs)
 
         # http://192.168.0.11:8000/api/restful-ide/bcim/unidades-federativas/1/envelope/transform/3857/envelope/transform/3674
-        if "operation" in kwargs:
+        if OPERATION_OR_ATTRIBUTES_KWARGS_LABEL in kwargs:
             return self.required_object_for_operation(request, object, *args, **kwargs)
 
         contype_accept = self.feature_utils.content_type_by_accept(request, *args, kwargs)
@@ -253,3 +271,36 @@ select * from bcim_2016.tra_trecho_rodoviario_l where gid = 40159
         if isinstance(object, GEOSGeometry):
             return json.loads(object.geojson)
         return {operation_name: object}
+
+    def serialize_object_for_attributes(self, request, attributes_dict, content_type):
+        if not self.serializer_class.Meta.geo_field in attributes_dict:
+            return super().serialize_object_for_attributes(request, attributes_dict, content_type)
+
+        serialized_geometry = json.loads(attributes_dict[self.serializer_class.Meta.geo_field].geojson)
+        if len(attributes_dict.keys()) == 1:
+            return serialized_geometry
+
+        feature_dict = {"type": "Feature", "properties": {}, "geometry": {}}
+        for property, value in attributes_dict.items():
+            if property != self.serializer_class.Meta.geo_field:
+                feature_dict["properties"].update({property: value})
+        feature_dict["geometry"].update(serialized_geometry)
+        return feature_dict
+
+    # ------------------- path analysis methods -------------------
+    def path_has_only_attributes(self, kwargs):
+        try:
+            path = self.remove_last_slash( kwargs[OPERATION_OR_ATTRIBUTES_KWARGS_LABEL] )
+            path_arr = path.split("/")
+
+            if len(path_arr) > 1:
+                return False
+
+            attributes = path_arr[0].split(ATTRIBUTES_SEPARATOR)
+            for attr in attributes:
+                if attr not in self.serializer_class.Meta.fields and attr != self.serializer_class.Meta.geo_field:
+                    return False
+            return True
+
+        except KeyError:
+            return False

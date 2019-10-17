@@ -30,6 +30,7 @@ GEOMETRY_FIELD_NAMES = (GeometryField, PointField, LineStringField, PolygonField
 
 from hyper_resource.models import FeatureCollectionModel, CollectionModel
 
+"""
 VOCABULARY = {
     # todo: these IRIs references classes. The intent is to describe its instances (not his class), so these must be replaced. Like in BORBA (2017) uses http://ecoide.cos.urfj.br/instituicoes/ibge/contexts/geometry.jsonld
     # todo: search for "schema:rangeIncludes", "schema:domainIncludes", "schema:StructuredValue"
@@ -51,10 +52,43 @@ VOCABULARY = {
     str: {"@id": "https://schema.org/value", "@type": "https://schema.org/Text"},
     float: {"@id": "https://schema.org/value", "@type": "https://schema.org/Float"}
 }
+"""
+
+VOCABULARY = {
+    # todo: these IRIs references classes. The intent is to describe its instances (not his class), so these must be replaced. Like in BORBA (2017) uses http://ecoide.cos.urfj.br/instituicoes/ibge/contexts/geometry.jsonld
+    # todo: search for "schema:rangeIncludes", "schema:domainIncludes", "schema:StructuredValue"
+    # Geometrics
+    GEOSGeometry: "https://purl.org/geojson/vocab#geometry",
+    Point: "https://purl.org/geojson/vocab#Point",
+    LineString: "https://purl.org/geojson/vocab#LineString",
+    Polygon: "https://purl.org/geojson/vocab#Polygon",
+    MultiPoint: "https://purl.org/geojson/vocab#MultiPoint",
+    MultiLineString: "https://purl.org/geojson/vocab#MultiLineString",
+    MultiPolygon: "https://schema.org/value", "@type": "https://purl.org/geojson/vocab#MultiPolygon",
+    FeatureCollectionModel: "https://purl.org/geojson/vocab#FeatureCollection",
+    Q: "https://schema.org/query",
+    CollectionModel: "http://www.w3.org/ns/hydra/core#Collection",
+
+    # primitives
+    int: "https://schema.org/Integer",
+    bool: "https://schema.org/Boolean",
+    str: "https://schema.org/Text",
+    float: "https://schema.org/Float"
+}
 
 class AbstractContextResource(object):
     # todo: search by PyLD features - https://github.com/digitalbazaar/pyld
     def get_term_definition_dict(self):
+        term_definition_dict = {
+            "name": "https://schema.org/name",
+            "nome": "https://schema.org/name",
+            AutoField: "https://schema.org/propertyID",
+            IntegerField: "https://schema.org/Integer",
+            CharField: "https://schema.org/Text",
+            DecimalField: "https://schema.org/Float",
+            FloatField: "https://schema.org/Float",
+        }
+        """
         term_definition_dict = {
             "name":         "https://schema.org/name",
             AutoField:      "https://schema.org/propertyID",
@@ -63,6 +97,7 @@ class AbstractContextResource(object):
             DecimalField:   {"@id": "https://schema.org/value", "@type": "https://schema.org/Float"},
             FloatField: {"@id": "https://schema.org/value", "@type": "https://schema.org/Float"},
         }
+        """
         return deepcopy(term_definition_dict)
 
     def create_context_for_fields(self, fields):
@@ -89,6 +124,9 @@ class AbstractContextResource(object):
                 "hydra:required": not field.null
             })
         return supported_propeties
+
+    def create_context_for_operations(self, operations_dict):
+        NotImplementedError("'create_context_for_operations' must be implemented")
 
 class AbstractCollectionContextResource(AbstractContextResource):
     pass

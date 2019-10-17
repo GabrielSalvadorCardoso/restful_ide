@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from hyper_resource.resources.AbstractResource import AbstractResource, CONTENT_TYPE_JSONLD, JSON_CONTENT_TYPE, \
-    RequiredObject
+    RequiredObject, OPERATION_OR_ATTRIBUTES_KWARGS_LABEL
 from hyper_resource.resources.FeatureCollectionResource import FeatureCollectionResource
 from hyper_resource.resources.FeatureResource import FeatureResource
 from .serializers import *
@@ -315,22 +315,33 @@ class UnidadesFederativasDetail(FeatureResource):
         self.metadata_uri = "http://www.metadados.geo.ibge.gov.br/geonetwork_ibge/srv/por/csw?request=GetRecordById&service=CSW&version=2.0.2&elementSetName=full&id=ff2d4215-9843-4137-bad9-c15f2a8caa9e"
         self.style_uri = "http://localhost:8000/api/restful-ide/bcim/unidade-federativa.sld"
 
-    def basic_get(self, request, *args, **kwargs):
+    def get_object_query_dict(self, **kwargs):
         query_dict = {}
-
         try:
             query_dict["sigla"] = kwargs["sigla"]
+            return query_dict
         except KeyError:
-            return super().basic_get(request, *args, **kwargs)
+            return super().get_object_query_dict(**kwargs)
+
+
+    """
+    def basic_get(self, request, *args, **kwargs):
+        #if self.path_has_only_attributes(kwargs):
+        #    return self.required_object_for_attributes(request, *args, **kwargs)
+
+        query_dict = {}
+
+        
 
         object = get_object_or_404(self.serializer_class.Meta.model, **query_dict)
 
-        if "operation" in kwargs:
+        if OPERATION_OR_ATTRIBUTES_KWARGS_LABEL in kwargs:
             return self.required_object_for_operation(request, object, *args, **kwargs)
 
         contype_accept = self.feature_utils.content_type_by_accept(request, *args, kwargs)
         serialize_data = self.serialize_object(request, object, contype_accept)
         return RequiredObject(serialize_data, contype_accept, 200)
+    """
 
 class UnidadeProtecaoIntegralList(FeatureCollectionResource):
     serializer_class = UnidadeProtecaoIntegralSerializer

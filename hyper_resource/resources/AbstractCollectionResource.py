@@ -1,6 +1,6 @@
 from rest_framework.response import Response
 
-from hyper_resource.resources.AbstractResource import AbstractResource, RequiredObject, JSON_CONTENT_TYPE, OPERATION_KWARGS_LABEL
+from hyper_resource.resources.AbstractResource import AbstractResource, RequiredObject, JSON_CONTENT_TYPE, OPERATION_OR_ATTRIBUTES_KWARGS_LABEL
 from hyper_resource.operations import InvalidOperationException
 
 class AbstractCollectionResource(AbstractResource):
