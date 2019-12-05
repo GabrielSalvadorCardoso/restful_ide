@@ -54,7 +54,8 @@ class Area(SpatialOperation):
 class Buffer(SpatialOperation):
     name = "buffer"
     return_type = GEOSGeometry
-    parameters_types = [float, int]
+    parameters_types = [float]
+    parameters_types = [float]
 
     def get_remaining_operations_snippet(self, parameters_str):
         return "/".join(parameters_str.split("/")[2:])
@@ -146,14 +147,17 @@ class SpatialFilterOperation(FeatureCollectionOperation):
     def convert_parameters(self, parameters_str):
         try:
             param = "/".join(parameters_str.split("/")[1:])
-            return GEOSGeometry(param)
+            return (GEOSGeometry(param),)
         except GEOSException:
             raise WrongParameterTypeError
         except ValueError:
             param = "/".join(parameters_str.split("/")[1:])
             if self.is_uri(param):
                 response = requests.get(param)
-                return GEOSGeometry(json.dumps(json.loads(response.text)["geometry"]))
+                try:
+                    return (GEOSGeometry(json.dumps(json.loads(response.text)["geometry"])),)
+                except KeyError:
+                    return (GEOSGeometry(response.content),)
             raise WrongParameterTypeError
 
 class Crosses(SpatialFilterOperation):

@@ -17,7 +17,7 @@ https://purl.org/geojson/vocab#properties
 https://purl.org/geojson/vocab#type
 """
 from django.contrib.gis.geos import Point, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon, GEOSGeometry
-from django.db.models import Q
+from django.db.models import Q, SmallIntegerField
 from copy import deepcopy
 
 from django.contrib.gis.db.models import GeometryCollectionField, GeometryField, PointField, LineStringField, \
@@ -87,6 +87,7 @@ class AbstractContextResource(object):
             CharField: "https://schema.org/Text",
             DecimalField: "https://schema.org/Float",
             FloatField: "https://schema.org/Float",
+            SmallIntegerField: "https://schema.org/Integer"
         }
         """
         term_definition_dict = {
@@ -101,7 +102,7 @@ class AbstractContextResource(object):
         return deepcopy(term_definition_dict)
 
     def create_context_for_fields(self, fields):
-        context_dict = {"@context": {}}
+        context_dict = {"@context": {"hydra": "https://www.w3.org/ns/hydra/core#"}}
 
         for field in fields:
             try:

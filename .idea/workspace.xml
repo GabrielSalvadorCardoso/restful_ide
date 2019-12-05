@@ -3,8 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="0a709eb4-b154-4e02-ab0a-ced0709726a7" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hyper_resource/resources/AbstractResource.py" beforeDir="false" afterPath="$PROJECT_DIR$/hyper_resource/resources/AbstractResource.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hyper_resource/resources/FeatureResource.py" beforeDir="false" afterPath="$PROJECT_DIR$/hyper_resource/resources/FeatureResource.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hyper_resource/contexts.py" beforeDir="false" afterPath="$PROJECT_DIR$/hyper_resource/contexts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hyper_resource/operations.py" beforeDir="false" afterPath="$PROJECT_DIR$/hyper_resource/operations.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -25,7 +26,7 @@
   <component name="ProjectId" id="1OdsuQVcxkEzaGJ6hpPMOb9lUag" />
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../ibge_estatistica" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../osm" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
@@ -206,7 +207,14 @@
       <option name="project" value="LOCAL" />
       <updated>1571277983213</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="OPTIONS response method moved to upper class">
+      <created>1571281232907</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1571281232928</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -226,7 +234,8 @@
     <MESSAGE value="Generating images from geometries and executing chained operations" />
     <MESSAGE value="Added filter operation" />
     <MESSAGE value="Enabled requests for only attributes (GET and OPTIONS)" />
-    <option name="LAST_COMMIT_MESSAGE" value="Enabled requests for only attributes (GET and OPTIONS)" />
+    <MESSAGE value="OPTIONS response method moved to upper class" />
+    <option name="LAST_COMMIT_MESSAGE" value="OPTIONS response method moved to upper class" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
